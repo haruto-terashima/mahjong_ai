@@ -41,53 +41,36 @@ class ResNet18(nn.Module):
         # conv1
         out = self.conv1(x)
         out = F.relu(out) 
-        print("===conv1（conv 3*3, stride:1, padding:1）===")
-        print(" ", out.size(),"\n")
+      
         
         # conv2_x 
         out = self.resblock2_1(out) + out
         out = F.relu(out)
-        print("===conv2_1（residual Block 3*3, stride:1, padding=1）===")
-        print(" ",out.size(),"\n")
         out = self.resblock2_2(out) + out
         out = F.relu(out)
-        print("===conv2-2（residual Block 3*3, stride:1, padding=1）===")
-        print(" ",out.size(),"\n")
         
         # conv3_x
         out = self.resblock3_1(out) + self.shortcut3(out)
         out = F.relu(out)
-        print("===conv3-1（residual Block 3*3, stride:1, padding=1）===")
-        print(" ",out.size(),"\n")
         out = self.resblock3_2(out) + out
         out = F.relu(out)
-        print("===conv3-2（residual Block 3*3, stride:1, padding=1）===")
-        print(" ",out.size(),"\n")
         
         #conv4_x
         out = self.resblock4_1(out) + self.shortcut4(out)
         out = F.relu(out)
-        print("===conv4-1（residual Block 3*3, stride:1, padding=1）===")
-        print(" ",out.size(),"\n")
         out = self.resblock4_2(out) + out
         out = F.relu(out)
-        print("===conv4-2（residual Block 3*3, stride:1, padding=1）===")
-        print(" ",out.size(),"\n")
 
         # conv5_x
         out = self.resblock5_1(out) + self.shortcut5(out)
         out = F.relu(out)
-        print("===conv5-1（residual Block 3*3, stride:1, padding=1）===")
-        print(" ",out.size(),"\n")
         out = self.resblock5_2(out) + out
         out = F.relu(out)
-        print("===conv5-2（residual Block 3*3, stride:1, padding=1）===")
-        print(" ",out.size(),"\n")
 
         out = self.avgpool(out)
         out = F.relu(out)
         out = self.fc(out.flatten(out, 1))
-        print("===fully connected layer===")
+    
         return out
     
 
