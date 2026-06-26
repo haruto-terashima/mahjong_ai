@@ -20,7 +20,6 @@ train_loader, val_loader = create_dataloaders(
     split_by_game=False
     )
 
-
 def train(model, train_loader, criterion, optimizer, num_epochs):
     model.to(device)
 
