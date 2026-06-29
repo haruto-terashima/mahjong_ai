@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class BuildingBlock(nn.Module):
+    
     def __init__(self, in_channels, med_channels, out_channels):
         super().__init__()
         self.m_1 = nn.Conv2d(in_channels, med_channels, kernel_size=3, stride=1, padding=1)
@@ -17,6 +18,7 @@ class BuildingBlock(nn.Module):
     
 
 class ResNet18(nn.Module):
+
     def __init__(self, in_channels, num_classes):
         super().__init__()
         self.conv1 = nn.Conv2d(in_channels, 64, kernel_size=3, stride=1, padding=1)
