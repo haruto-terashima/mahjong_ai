@@ -1,61 +1,39 @@
 import torch
-import torch.nn as nn
-import torch.optim as optim
 
-from dataset.dataset import MahjongDataset, create_dataloaders
-from models.ResNet import ResNet18
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+def train_one_epoch(model, train_loader, criterion, optimizer, device):
+    model.train()
 
-dataset = MahjongDataset(
-    zip_path=DATASET_PATH,
-    max_files=50,
-    collect_all_actions=False
-)
+    total_loss = 0.0
+    correct = 0
+    total = 0
 
-train_loader, val_loader = create_dataloaders(
-    dataset, 
-    train_ratio=0.9,
-    batch_size=64,
-    split_by_game=False
-    )
+    for data, target, _ in train_loader:
+        data = data.to(device)
+        target = target.to(device)
 
-def train(model, train_loader, criterion, optimizer, num_epochs):
-    model.to(device)
+        optimizer.zero_grad()
+        output = model(data)
+        loss = criterion(output, target)
+        loss.backward()
+        optimizer.step()
 
-    for epoch in range(num_epochs):
-        model.train()
+        total_loss += loss.item()
 
-        total_loss = 0
-        correct = 0
-        total = 0
+        pred = output.argmax(dim=1)
+        correct += (pred == target).sum().item()
+        total += target.size(0)
 
-        for data, target, _ in train_loader:
-            data, target = data.to(device), target.to(device)
+    avg_loss = total_loss / len(train_loader)
+    acc = correct / total
 
-            optimizer.zero_grad()
-            output = model(data)
-            loss = criterion(output, target)
-            loss.backward()
-            optimizer.step()
+    return avg_loss, acc
 
-            # loss集計
-            total_loss += loss.item()
-
-            # accuracy計算
-            pred = output.argmax(dim=1)
-            correct += (pred == target).sum().item()
-            total += target.size(0)
-
-        avg_loss = total_loss / len(train_loader)
-        acc = correct / total
-
-        print(f"Epoch [{epoch+1}/{num_epochs}] Loss: {avg_loss:.4f}, Acc: {acc:.4f}")
 
 def evaluate(model, val_loader, criterion, device):
     model.eval()
 
-    total_loss = 0
+    total_loss = 0.0
     correct = 0
     total = 0
 
@@ -77,5 +55,3 @@ def evaluate(model, val_loader, criterion, device):
     acc = correct / total
 
     return avg_loss, acc
-
-    

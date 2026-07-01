@@ -19,7 +19,6 @@ models/
   ResNet.py               ResNet-style classifier
   ViT.py                  Experimental Vision Transformer implementation
 train_val.py              Training/evaluation helper draft
-test_dataset.py           Small dataset smoke-test script
 ```
 
 ## Data Format
@@ -153,11 +152,25 @@ for states, labels, _actions in train_loader:
 
 ## Smoke Test
 
-After placing a compatible data archive somewhere on disk, update the path in
-`test_dataset.py` or run an equivalent snippet:
+`test_dataset.py` is ignored by Git so it can stay local. To verify the dataset
+loader, run a short inline check with your own archive path:
 
 ```bash
-python test_dataset.py
+python - <<'PY'
+from dataset.dataset import MahjongDataset
+
+ds = MahjongDataset(
+    zip_path="/path/to/data.zip",
+    collect_all_actions=False,
+    max_files=5,
+)
+
+print("samples:", len(ds))
+x, y, action_type = ds[0]
+print(x.shape)
+print(y)
+print(action_type)
+PY
 ```
 
 Expected output includes the number of samples, one encoded tensor shape, one
